@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Truth or Fake</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 10 10%22><circle cx=%225%22 cy=%225%22 r=%224%22 fill=%22%23e5172f%22/></svg>">
+<link rel="stylesheet" href="theme.css">
+<style>
+  .viewer{position:relative;background:#000;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;min-height:420px;display:flex;align-items:center;justify-content:center}
+  .viewer img{max-width:100%;max-height:70vh;display:block}
+  .viewer .layer{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+  .gauge{position:relative;width:200px;height:110px;margin:6px auto 0}
+  .gauge svg{width:200px;height:110px}
+  .gauge .val{position:absolute;left:0;right:0;bottom:4px;text-align:center;font:800 34px var(--font)}
+  .sig{display:flex;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);font-size:13px}
+  .sig .ic{flex:none;width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font:700 12px var(--mono)}
+  .ic.fake{background:var(--redsoft);color:var(--red2)} .ic.warn{background:rgba(245,165,36,.12);color:var(--warn)}
+  .ic.ok{background:rgba(46,204,113,.1);color:var(--ok)} .ic.info{background:rgba(90,169,255,.1);color:var(--info)}
+  .kv{display:grid;grid-template-columns:150px 1fr;gap:4px 12px;font-size:12.5px} .kv div:nth-child(odd){color:var(--muted)}
+  .kv div{overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="dot"></span>TRUTH OR FAKE <small>analyse forensique d'images</small></div>
+  <div class="spacer"></div>
+  <button class="btn ghost sm" id="demo">⚗ Générer une image piégée</button>
+</header>
+<main class="wrap layout" style="grid-template-columns:360px 1fr">
+  <aside class="col" style="gap:16px">
+    <div class="drop" id="drop"><div style="font-size:28px">⬆</div><b>Déposez une image</b><div class="dim">ou cliquez · JPEG, PNG, WebP</div><input type="file" id="file" accept="image/*" hidden></div>
+    <div class="card" id="verdictCard" hidden>
+      <div class="kicker">Verdict</div>
+      <div class="gauge"><svg viewBox="0 0 200 110"><path d="M15 100 A85 85 0 0 1 185 100" fill="none" stroke="#26262e" stroke-width="16" stroke-linecap="round"/>
+        <path id="arc" d="M15 100 A85 85 0 0 1 185 100" fill="none" stroke="url(#g)" stroke-width="16" stroke-linecap="round" stroke-dasharray="267" stroke-dashoffset="267" style="transition:stroke-dashoffset .8s"/>
+        <defs><linearGradient id="g"><stop offset="0" stop-color="#2ecc71"/><stop offset=".5" stop-color="#f5a524"/><stop offset="1" stop-color="#e5172f"/></linearGradient></defs></svg>
+        <div class="val" id="score">0</div></div>
+      <h2 style="text-align:center;margin-top:6px" id="verdict"></h2>
+      <p class="dim" style="text-align:center;font-size:12px;margin:0">Indice de manipulation sur 100. Ce n'est pas une preuve : croisez toujours les indices.</p>
+    </div>
+    <div class="col" id="signals"></div>
+  </aside>
+  <section class="col" style="gap:16px">
+    <div class="tabs" id="tabs">
+      <div class="tab on" data-l="original">Original</div><div class="tab" data-l="ela">ELA</div><div class="tab" data-l="noise">Carte du bruit</div>
+      <div class="tab" data-l="spectrum">Spectre FFT</div><div class="tab" data-l="copymove">Copier-coller</div>
+    </div>
+    <div class="viewer" id="viewer"><div class="empty" id="ph" style="border:0">Aucune image analysée</div><img id="orig" hidden alt=""><div class="layer"><img id="layer" hidden alt=""></div></div>
+    <div class="row"><label style="margin:0;white-space:nowrap">Opacité de la couche</label><input type="range" id="op" min="0" max="1" step=".05" value="1" style="max-width:260px"><span class="dim" id="layerHelp" style="font-size:12px"></span></div>
+    <div class="grid g2">
+      <div class="card"><h3>Métadonnées</h3><div class="kv" id="meta"><div>—</div><div></div></div></div>
+      <div class="card"><h3>Mesures brutes</h3><div class="kv" id="metrics"><div>—</div><div></div></div></div>
+    </div>
+  </section>
+</main>
+<script src="ui.js"></script><script src="app.js"></script>
+</body>
+</html>
